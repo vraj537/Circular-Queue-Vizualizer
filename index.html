@@ -1,98 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Smart Circular Queue Visualizer (Node-Based & High Performance)</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Circular Queue Visualizer</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="aurora"></div>
+    <div class="aurora"></div>
 
+    <div class="wrap">
+        <header class="hero">
+            <h1>Circular Queue <span>Visualizer</span></h1>
+            
+        </header>
 
-<div class="wrap">
-  <header class="hero">
-    <h1>Circular Queue <span>Visualizer</span></h1>
-    
-    <div class="tags"><span>Max 50 Elements</span></div>
-  </header>
+        <section class="card" id="simulator">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:16px;">
+                <div class="seg" id="modeSeg">
+                    <button data-mode="array" class="on">Array Buffer</button>
+                    <button data-mode="singly">Singly Linked List</button>
+                    <button data-mode="doubly">Doubly Linked List</button>
+                </div>
 
-  <section class="card" id="simulator">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:16px;">
-      <div class="seg" id="modeSeg">
-        <button data-mode="array" class="on">Array Buffer</button>
-        <button data-mode="singly">Singly Linked List</button>
-        <button data-mode="doubly">Doubly Linked List</button>
-      </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <label style="margin:0; font-size:11px;">Queue Capacity (3 - 15):</label>
+                    <input type="number" id="inputCap" value="8" min="3" max="15" style="width:70px;" onchange="changeCapacity(this.value)">
+                </div>
+            </div>
 
-      <div style="display:flex; gap:10px; align-items:center;">
-        <label style="margin:0; font-size:11px;">Queue Capacity (3 - 50):</label>
-        <input type="number" id="inputCap" value="8" min="3" max="50" style="width:70px;" onchange="changeCapacity(this.value)">
-      </div>
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <input type="number" id="enqueueVal" value="10" placeholder="Val" style="width:75px;">
+                <button class="btn go" onclick="handleEnqueue()">+ Enqueue</button>
+                <button class="btn go" style="background:linear-gradient(135deg, #10b981, #3ee0c4);" onclick="handleRandomEnqueue()">+ Random</button>
+                <button class="btn danger" onclick="handleDequeue()">- Dequeue</button>
+                <button class="btn gold" onclick="handlePeek()">Peek Front/Rear</button>
+                <button class="btn" onclick="handleAutoFill()">Auto Fill</button>
+                <button class="btn" onclick="resetQueue()">Reset</button>
+
+                <div class="clock" id="statusBadge">STATUS: READY</div>
+                <div class="seg" id="speeds" style="margin-left:10px;">
+                    <button data-s="400">0.5x</button>
+                    <button data-s="200" class="on">1.0x</button>
+                    <button data-s="80">2.0x</button>
+                    <button data-s="0">Instant</button>
+                </div>
+            </div>
+
+            <!-- Workspace -->
+            <div class="workspace">
+                <!-- Canvas Visualizer -->
+                <div class="canvas-card">
+                    <div style="display:flex; justify-content:space-between; width:100%; font-size:12px; color:var(--mute); font-weight:600; margin-bottom:6px;">
+                        <span id="canvasModeLabel">Structured Memory Nodes (Array Mode: 8 Slots)</span>
+                        <span id="viewModeNotice">Circular Memory Ring</span>
+                    </div>
+                    
+                    <canvas id="renderCanvas"></canvas>
+
+                    <div class="metrics">
+                        <div class="metric"><b id="mFront">-1</b><span>Front Index</span></div>
+                        <div class="metric"><b id="mRear">-1</b><span>Rear Index</span></div>
+                        <div class="metric"><b id="mItems">0 / 8</b><span>Active Elements</span></div>
+                        <div class="metric"><b id="mFormula">(R + 1) % N</b><span>Wrap Logic</span></div>
+                    </div>
+                </div>
+
+                <!-- C Code Inspector -->
+                <div class="inspector" id="inspector">
+                    <div class="insp-header">
+                        <span id="codeFilename">circularqueue_array.c</span>
+                        <span style="color:var(--teal)">Step Highlight</span>
+                    </div>
+                    <div class="insp-body" id="codeContainer"></div>
+                </div>
+            </div>
+
+            <!-- Execution Log -->
+            <div class="console" id="console-sec">
+                <div class="console-head">
+                    <span>Execution Terminal Output</span>
+                    <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="clearConsole()">Clear Logs</button>
+                </div>
+                <div class="console-body" id="consoleLog">
+                    <div class="log-info">[System] Circular queue engine initialized. Max capacity set to 8 elements.</div>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <!-- Actions & Speed Bar -->
-    <div class="toolbar">
-      <input type="number" id="enqueueVal" value="10" placeholder="Val" style="width:75px;">
-      <button class="btn go" onclick="handleEnqueue()">+ Enqueue</button>
-      <button class="btn go" style="background:linear-gradient(135deg, #10b981, #3ee0c4);" onclick="handleRandomEnqueue()">+ Random</button>
-      <button class="btn danger" onclick="handleDequeue()">- Dequeue</button>
-      <button class="btn gold" onclick="handlePeek()">Peek Front/Rear</button>
-      <button class="btn" onclick="handleAutoFill()">Auto Fill</button>
-      <button class="btn" onclick="resetQueue()">Reset</button>
-
-      <div class="clock" id="statusBadge">STATUS: READY</div>
-      <div class="seg" id="speeds" style="margin-left:10px;">
-        <button data-s="400">0.5x</button>
-        <button data-s="200" class="on">1.0x</button>
-        <button data-s="80">2.0x</button>
-        <button data-s="0">Instant</button>
-      </div>
-    </div>
-
-    <!-- Main Workspace -->
-    <div class="workspace">
-      <!-- Left: High Performance Node Canvas -->
-      <div class="canvas-card">
-        <div style="display:flex; justify-content:space-between; width:100%; font-size:12px; color:var(--mute); font-weight:600; margin-bottom:6px;">
-          <span id="canvasModeLabel">Structured Memory Nodes (Array Mode: 8 Slots)</span>
-          <span id="viewModeNotice">Circular Memory Ring</span>
-        </div>
-        
-        <canvas id="renderCanvas"></canvas>
-
-        <div class="metrics">
-          <div class="metric"><b id="mFront">-1</b><span>Front Index</span></div>
-          <div class="metric"><b id="mRear">-1</b><span>Rear Index</span></div>
-          <div class="metric"><b id="mItems">0 / 8</b><span>Active Elements</span></div>
-          <div class="metric"><b id="mFormula">(R + 1) % N</b><span>Wrap Logic</span></div>
-        </div>
-      </div>
-
-      <!-- Right: Side-by-Side C Code Inspector -->
-      <div id="inspector">
-        <div class="insp-header">
-          <span id="codeFilename">circularqueue_array.c</span>
-          <span style="color:var(--teal)">Step Highlight</span>
-        </div>
-        <div class="insp-body" id="codeContainer"></div>
-      </div>
-    </div>
-
-    <!-- Terminal Console Log -->
-    <div class="console" id="console-sec">
-      <div class="console-head">
-        <span>Execution Terminal Output</span>
-        <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="clearConsole()">Clear Logs</button>
-      </div>
-      <div class="console-body" id="consoleLog">
-        <div class="log-info">[System] Circular queue engine initialized. Max capacity set to 8 elements.</div>
-      </div>
-    </div>
-  </section>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
