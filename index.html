@@ -17,10 +17,8 @@
 
         <section class="card" id="simulator">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:16px;">
-                <div class="seg" id="modeSeg">
-                    <button data-mode="array" class="on">Array Buffer</button>
-                    <button data-mode="singly">Singly Linked List</button>
-                    <button data-mode="doubly">Doubly Linked List</button>
+                <div class="seg">
+                    <button class="on" style="cursor:default;">Array Buffer</button>
                 </div>
 
                 <div style="display:flex; gap:10px; align-items:center;">
@@ -53,8 +51,8 @@
                 <!-- Canvas Visualizer -->
                 <div class="canvas-card">
                     <div style="display:flex; justify-content:space-between; width:100%; font-size:12px; color:var(--mute); font-weight:600; margin-bottom:6px;">
-                        <span id="canvasModeLabel">Structured Memory Nodes (Array Mode: 8 Slots)</span>
-                        <span id="viewModeNotice">Circular Memory Ring</span>
+                        <span id="canvasModeLabel">Array Buffer (8 Slots)</span>
+                        <span id="viewModeNotice">Circular Array Ring</span>
                     </div>
                     
                     <canvas id="renderCanvas"></canvas>

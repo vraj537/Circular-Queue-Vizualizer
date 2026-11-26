@@ -27,7 +27,6 @@ body {
 h1, h2, h3, h4 { font-family: "Times New Roman", Times, serif; }
 button { font: inherit; color: inherit; cursor: pointer; }
 
-/* Aurora background */
 .aurora { 
   position: fixed; 
   inset: 0; 
